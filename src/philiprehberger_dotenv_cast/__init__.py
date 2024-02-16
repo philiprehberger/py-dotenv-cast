@@ -147,6 +147,41 @@ class Env:
             return default
         return [item.strip() for item in raw.split(separator)]
 
+    def url(self, key: str, default: str = _MISSING) -> str:
+        """Get an environment variable as a validated URL.
+
+        Args:
+            key: Environment variable name.
+            default: Default value if not set.
+
+        Returns:
+            The variable value validated as a URL.
+
+        Raises:
+            MissingEnvError: If the variable is not set and no default is provided.
+            ValueError: If the value does not start with http:// or https://.
+        """
+        value = self._get(key, default)
+        if not value.startswith(("http://", "https://")):
+            msg = f"Invalid URL for {key}: {value}"
+            raise ValueError(msg)
+        return value
+
+    def path(self, key: str, default: str = _MISSING) -> Path:
+        """Get an environment variable as a Path object.
+
+        Args:
+            key: Environment variable name.
+            default: Default value if not set.
+
+        Returns:
+            The variable value as a Path.
+
+        Raises:
+            MissingEnvError: If the variable is not set and no default is provided.
+        """
+        return Path(self._get(key, default))
+
     def json(self, key: str, default: Any = _MISSING) -> Any:
         """Get an environment variable parsed as JSON.
 

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "philiprehberger-dotenv-cast"
-version = "0.1.2"
+version = "0.2.0"
 description = "Type-safe environment variable loading with casting and defaults."
 readme = "README.md"
 license = "MIT"
