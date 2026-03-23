@@ -89,6 +89,13 @@ load_dotenv("config/.env.production")
 | `Env` | Class for creating custom instances |
 | `MissingEnvError` | Raised when a required variable is missing |
 
+## Development
+
+```bash
+pip install -e .
+python -m pytest tests/ -v
+```
+
 ## License
 
 MIT

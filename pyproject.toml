@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "philiprehberger-dotenv-cast"
-version = "0.1.0"
+version = "0.1.1"
 description = "Type-safe environment variable loading with casting and defaults."
 readme = "README.md"
 license = "MIT"
@@ -24,9 +24,16 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/philiprehberger/py-dotenv-cast"
+Homepage = "https://github.com/philiprehberger/py-dotenv-cast#readme"
 Repository = "https://github.com/philiprehberger/py-dotenv-cast"
 Issues = "https://github.com/philiprehberger/py-dotenv-cast/issues"
+Changelog = "https://github.com/philiprehberger/py-dotenv-cast/blob/main/CHANGELOG.md"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/philiprehberger_dotenv_cast"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.mypy]
+strict = true
