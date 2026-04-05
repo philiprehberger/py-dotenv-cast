@@ -114,3 +114,33 @@ def test_load_dotenv_file_not_found():
 
 def test_env_instance_is_env_class():
     assert isinstance(env, Env)
+
+
+def test_url_returns_valid_url():
+    os.environ["API_URL"] = "https://example.com/api"
+    assert env.url("API_URL") == "https://example.com/api"
+
+
+def test_url_rejects_invalid_url():
+    os.environ["BAD_URL"] = "ftp://example.com"
+    with pytest.raises(ValueError, match="Invalid URL"):
+        env.url("BAD_URL")
+
+
+def test_url_missing_raises():
+    with pytest.raises(MissingEnvError):
+        env.url("MISSING_URL")
+
+
+def test_path_returns_path_object():
+    from pathlib import Path
+
+    os.environ["DATA_DIR"] = "/tmp/data"
+    result = env.path("DATA_DIR")
+    assert isinstance(result, Path)
+    assert str(result) == "/tmp/data"
+
+
+def test_path_missing_raises():
+    with pytest.raises(MissingEnvError):
+        env.path("MISSING_PATH")
