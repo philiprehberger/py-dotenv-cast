@@ -144,3 +144,77 @@ def test_path_returns_path_object():
 def test_path_missing_raises():
     with pytest.raises(MissingEnvError):
         env.path("MISSING_PATH")
+
+from datetime import timedelta
+
+
+def test_bytes_plain_int():
+    os.environ['TEST_DC_SIZE'] = '4096'
+    assert env.bytes('TEST_DC_SIZE') == 4096
+
+
+def test_bytes_kilobytes():
+    os.environ['TEST_DC_SIZE'] = '512KB'
+    assert env.bytes('TEST_DC_SIZE') == 512 * 1024
+
+
+def test_bytes_fractional_megabytes():
+    os.environ['TEST_DC_SIZE'] = '2.5MB'
+    assert env.bytes('TEST_DC_SIZE') == int(2.5 * 1024 * 1024)
+
+
+def test_bytes_gib_suffix():
+    os.environ['TEST_DC_SIZE'] = '1GiB'
+    assert env.bytes('TEST_DC_SIZE') == 1024 ** 3
+
+
+def test_bytes_default_when_missing():
+    assert env.bytes('TEST_DC_MISSING_BYTES', default=4096) == 4096
+
+
+def test_bytes_missing_raises():
+    with pytest.raises(MissingEnvError):
+        env.bytes('TEST_DC_MISSING_BYTES')
+
+
+def test_bytes_invalid_unit_raises():
+    os.environ['TEST_DC_SIZE'] = '10ZB'
+    with pytest.raises(ValueError):
+        env.bytes('TEST_DC_SIZE')
+
+
+def test_duration_seconds():
+    os.environ['TEST_DC_DUR'] = '30s'
+    assert env.duration('TEST_DC_DUR') == timedelta(seconds=30)
+
+
+def test_duration_minutes():
+    os.environ['TEST_DC_DUR'] = '5m'
+    assert env.duration('TEST_DC_DUR') == timedelta(minutes=5)
+
+
+def test_duration_compound():
+    os.environ['TEST_DC_DUR'] = '1h30m'
+    assert env.duration('TEST_DC_DUR') == timedelta(hours=1, minutes=30)
+
+
+def test_duration_milliseconds():
+    os.environ['TEST_DC_DUR'] = '500ms'
+    assert env.duration('TEST_DC_DUR') == timedelta(milliseconds=500)
+
+
+def test_duration_default_when_missing():
+    fallback = timedelta(seconds=10)
+    assert env.duration('TEST_DC_MISSING_DUR', default=fallback) == fallback
+
+
+def test_duration_missing_raises():
+    with pytest.raises(MissingEnvError):
+        env.duration('TEST_DC_MISSING_DUR')
+
+
+def test_duration_invalid_unit_raises():
+    os.environ['TEST_DC_DUR'] = '10x'
+    with pytest.raises(ValueError):
+        env.duration('TEST_DC_DUR')
+

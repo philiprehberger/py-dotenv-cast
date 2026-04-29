@@ -1,10 +1,16 @@
 # Changelog
 
+## 0.3.0 (2026-04-29)
+
+- Add `Env.bytes()` for parsing human-readable size strings (`512KB`, `2.5MiB`, plain integers)
+- Add `Env.duration()` for parsing duration strings into `timedelta` (`30s`, `5m`, `1h30m`, `500ms`)
+- Cover both new methods with valid/invalid/missing/default tests
 
 ## 0.2.0 (2026-04-04)
 
 - Add `Env.url()` for validated URL loading
 - Add `Env.path()` for Path object loading
+
 ## 0.1.2 (2026-03-31)
 
 - Standardize README to 3-badge format with emoji Support section

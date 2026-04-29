@@ -50,6 +50,31 @@ paths = env.list("PATHS", separator=":")
 config = env.json("CONFIG")  # '{"key": "value"}' -> {"key": "value"}
 ```
 
+### Byte Sizes
+
+Parse human-readable size strings into raw byte counts:
+
+```python
+max_upload = env.bytes("MAX_UPLOAD")     # "10MB"  -> 10 * 1024**2
+buffer = env.bytes("BUFFER", default=4096)  # "1.5KiB" -> 1536
+```
+
+Supported suffixes (case-insensitive): `B`, `KB`/`KiB`, `MB`/`MiB`, `GB`/`GiB`, `TB`/`TiB`. A bare number is treated as bytes.
+
+### Durations
+
+Parse duration strings into `datetime.timedelta` values:
+
+```python
+from datetime import timedelta
+
+timeout = env.duration("TIMEOUT")           # "30s"     -> timedelta(seconds=30)
+poll = env.duration("POLL_INTERVAL")        # "500ms"   -> timedelta(milliseconds=500)
+ttl = env.duration("CACHE_TTL", default=timedelta(minutes=5))  # "1h30m" -> 1h30m
+```
+
+Supported units (lowercase): `ms`, `s`, `m`, `h`, `d`, `w`. Compound durations (`1h30m`) are summed.
+
 ### Missing Variables
 
 Variables without a default raise `MissingEnvError`:
@@ -85,6 +110,8 @@ load_dotenv("config/.env.production")
 | `env.bool(key, default?)` | Get variable cast to bool |
 | `env.list(key, separator?, default?)` | Get variable split into a list |
 | `env.json(key, default?)` | Get variable parsed as JSON |
+| `env.bytes(key, default?)` | Get variable parsed as a byte size (`512KB`, `2MiB`, …) |
+| `env.duration(key, default?)` | Get variable parsed as a `timedelta` (`30s`, `1h30m`, …) |
 | `load_dotenv(path?)` | Load a .env file into `os.environ` |
 | `Env` | Class for creating custom instances |
 | `MissingEnvError` | Raised when a required variable is missing |
