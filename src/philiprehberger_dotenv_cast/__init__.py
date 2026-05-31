@@ -298,6 +298,72 @@ class Env:
             return default  # type: ignore[return-value]
         return _parse_duration(raw)
 
+    def choice(
+        self,
+        name: str,
+        options: list[str],
+        *,
+        default: str | None = None,
+        required: bool = True,
+    ) -> str:
+        """Load env var *name* and validate it is one of *options*.
+
+        Args:
+            name: Env var name.
+            options: Allowed values.
+            default: Returned when the var is unset and ``required=False``.
+            required: When True (default), raises ``MissingEnvError`` if unset.
+
+        Returns:
+            The variable value, guaranteed to be one of *options*.
+
+        Raises:
+            MissingEnvError: When the var is unset and ``required=True``.
+            ValueError: When the var's value is not in *options*.
+        """
+        value = os.environ.get(name)
+        if value is None:
+            if required:
+                raise MissingEnvError(name)
+            return default  # type: ignore[return-value]
+        if value not in options:
+            msg = f"{name} must be one of {options}; got {value!r}"
+            raise ValueError(msg)
+        return value
+
+    def regex(
+        self,
+        name: str,
+        pattern: str,
+        *,
+        default: str | None = None,
+        required: bool = True,
+    ) -> str:
+        """Load env var *name* and validate it matches *pattern* (``re.fullmatch``).
+
+        Args:
+            name: Env var name.
+            pattern: Regex pattern the value must fully match.
+            default: Returned when the var is unset and ``required=False``.
+            required: When True (default), raises ``MissingEnvError`` if unset.
+
+        Returns:
+            The variable value, guaranteed to fully match *pattern*.
+
+        Raises:
+            MissingEnvError: When the var is unset and ``required=True``.
+            ValueError: When the var's value doesn't match *pattern*.
+        """
+        value = os.environ.get(name)
+        if value is None:
+            if required:
+                raise MissingEnvError(name)
+            return default  # type: ignore[return-value]
+        if not re.fullmatch(pattern, value):
+            msg = f"{name}={value!r} doesn't match pattern {pattern!r}"
+            raise ValueError(msg)
+        return value
+
     def json(self, key: str, default: Any = _MISSING) -> Any:
         """Get an environment variable parsed as JSON.
 

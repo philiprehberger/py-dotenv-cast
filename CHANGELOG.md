@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.4.0 (2026-05-30)
+
+- Add `Env.choice()` for env vars validated against a fixed set of options
+- Add `Env.regex()` for env vars validated against a regex pattern
+
 ## 0.3.0 (2026-04-29)
 
 - Add `Env.bytes()` for parsing human-readable size strings (`512KB`, `2.5MiB`, plain integers)

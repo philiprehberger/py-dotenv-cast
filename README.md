@@ -75,6 +75,24 @@ ttl = env.duration("CACHE_TTL", default=timedelta(minutes=5))  # "1h30m" -> 1h30
 
 Supported units (lowercase): `ms`, `s`, `m`, `h`, `d`, `w`. Compound durations (`1h30m`) are summed.
 
+### Validating choices
+
+Restrict a variable to a fixed set of allowed values:
+
+```python
+mode = env.choice("MODE", ["dev", "staging", "prod"])  # raises ValueError if not in list
+level = env.choice("LOG_LEVEL", ["debug", "info", "warn"], default="info", required=False)
+```
+
+### Validating with regex
+
+Validate a variable against a regex pattern (uses `re.fullmatch`):
+
+```python
+version = env.regex("VERSION", r"\d+\.\d+\.\d+")           # "1.2.3" ok, "abc" raises ValueError
+slug = env.regex("SLUG", r"[a-z0-9-]+", default="app", required=False)
+```
+
 ### Missing Variables
 
 Variables without a default raise `MissingEnvError`:
@@ -112,6 +130,8 @@ load_dotenv("config/.env.production")
 | `env.json(key, default?)` | Get variable parsed as JSON |
 | `env.bytes(key, default?)` | Get variable parsed as a byte size (`512KB`, `2MiB`, …) |
 | `env.duration(key, default?)` | Get variable parsed as a `timedelta` (`30s`, `1h30m`, …) |
+| `env.choice(name, options, default=None, required=True)` | Get variable validated against a list of allowed values |
+| `env.regex(name, pattern, default=None, required=True)` | Get variable validated against a regex pattern (`re.fullmatch`) |
 | `load_dotenv(path?)` | Load a .env file into `os.environ` |
 | `Env` | Class for creating custom instances |
 | `MissingEnvError` | Raised when a required variable is missing |

@@ -218,3 +218,54 @@ def test_duration_invalid_unit_raises():
     with pytest.raises(ValueError):
         env.duration('TEST_DC_DUR')
 
+
+def test_choice_returns_value_when_in_options(monkeypatch):
+    monkeypatch.setenv("MODE", "prod")
+    assert Env().choice("MODE", ["dev", "prod"]) == "prod"
+
+
+def test_choice_rejects_value_not_in_options(monkeypatch):
+    monkeypatch.setenv("MODE", "staging")
+    with pytest.raises(ValueError, match="must be one of"):
+        Env().choice("MODE", ["dev", "prod"])
+
+
+def test_choice_required_missing_raises(monkeypatch):
+    monkeypatch.delenv("MODE", raising=False)
+    with pytest.raises(MissingEnvError):
+        Env().choice("MODE", ["dev", "prod"])
+
+
+def test_choice_default_used_when_not_required(monkeypatch):
+    monkeypatch.delenv("MODE", raising=False)
+    assert (
+        Env().choice("MODE", ["dev", "prod"], default="dev", required=False) == "dev"
+    )
+
+
+def test_regex_returns_value_when_matches(monkeypatch):
+    monkeypatch.setenv("VERSION", "1.2.3")
+    assert Env().regex("VERSION", r"\d+\.\d+\.\d+") == "1.2.3"
+
+
+def test_regex_rejects_value_when_no_match(monkeypatch):
+    monkeypatch.setenv("VERSION", "abc")
+    with pytest.raises(ValueError, match="doesn't match pattern"):
+        Env().regex("VERSION", r"\d+\.\d+\.\d+")
+
+
+def test_regex_required_missing_raises(monkeypatch):
+    monkeypatch.delenv("VERSION", raising=False)
+    with pytest.raises(MissingEnvError):
+        Env().regex("VERSION", r"\d+\.\d+\.\d+")
+
+
+def test_regex_default_used_when_not_required(monkeypatch):
+    monkeypatch.delenv("VERSION", raising=False)
+    assert (
+        Env().regex(
+            "VERSION", r"\d+\.\d+\.\d+", default="0.0.0", required=False
+        )
+        == "0.0.0"
+    )
+
